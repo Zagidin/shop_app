@@ -1,6 +1,7 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
 from db import execute_query
+from tkinter import ttk, messagebox
+from import_utils import import_excel_to_table
 
 
 class CustomersWindow:
@@ -24,8 +25,25 @@ class CustomersWindow:
         tk.Button(btn_frame, text="Изменить", command=self.edit_customer).pack(side=tk.LEFT, padx=5)
         tk.Button(btn_frame, text="Удалить", command=self.delete_customer).pack(side=tk.LEFT, padx=5)
         tk.Button(btn_frame, text="Показать заказы клиента", command=self.show_orders).pack(side=tk.LEFT, padx=5)
+        tk.Button(btn_frame, text="Импорт из Excel", command=self.import_from_excel).pack(side=tk.LEFT, padx=5)
 
         self.load_data()
+
+    def import_from_excel(self):
+        from tkinter import filedialog, messagebox
+        file_path = filedialog.askopenfilename(
+            title="Выберите файл Excel",
+            filetypes=[("Excel files", "*.xlsx *.xls")]
+        )
+        if not file_path:
+            return
+        try:
+            columns = ['last_name', 'first_name', 'phone', 'email', 'discount']
+            import_excel_to_table(file_path, 'customers', columns)
+            messagebox.showinfo("Успех", "Данные импортированы")
+            self.load_data()
+        except Exception as e:
+            messagebox.showerror("Ошибка", str(e))
 
     def load_data(self):
         for row in self.tree.get_children():
