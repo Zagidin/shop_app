@@ -42,6 +42,10 @@ def get_session():
     return Session()
 
 def execute_query(sql, params=None):
+    """
+        Универсальная функция для выполнения SQL-запросов.
+        Для SELECT возвращает список словарей, для остальных – None.
+        """
     with engine.connect() as conn:
         if params:
             result = conn.execute(text(sql), params)
